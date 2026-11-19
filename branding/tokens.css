@@ -1,0 +1,45 @@
+/* Acopio — paleta de marca.
+   Modo claro por defecto; oscuro con prefers-color-scheme o forzado con data-theme="dark". */
+:root,
+:root[data-theme="light"] {
+  --acopio-primary:        #3D5A2C;
+  --acopio-primary-hover:  #324A24;
+  --acopio-accent:         #9CBF6E;
+  --acopio-text:           #1F261B;
+  --acopio-bg:             #F6F7F2;
+  --acopio-surface:        #FFFFFF;
+  --acopio-border:         #D9DCCF;
+  --acopio-text-secondary: #6B6E66;
+
+  /* Estados: nunca el verde de marca para "éxito" */
+  --acopio-success:        #1F6B3A;
+  --acopio-success-bg:     #E7F4EA;
+  --acopio-warning:        #8A5A0A;
+  --acopio-warning-bg:     #FCF3DF;
+  --acopio-error:          #A1261B;
+  --acopio-error-bg:       #FCEBE9;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --acopio-primary:        #7FA05A;
+    --acopio-primary-hover:  #93B36C;
+    --acopio-accent:         #C5DDA0;
+    --acopio-text:           #EEF0E8;
+    --acopio-bg:             #1B2018;
+    --acopio-surface:        #252B21;
+    --acopio-border:         #3B4434;
+    --acopio-text-secondary: #A6AD9F;
+  }
+}
+
+:root[data-theme="dark"] {
+  --acopio-primary:        #7FA05A;
+  --acopio-primary-hover:  #93B36C;
+  --acopio-accent:         #C5DDA0;
+  --acopio-text:           #EEF0E8;
+  --acopio-bg:             #1B2018;
+  --acopio-surface:        #252B21;
+  --acopio-border:         #3B4434;
+  --acopio-text-secondary: #A6AD9F;
+}
