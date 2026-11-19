@@ -1,5 +1,5 @@
 /* =========================================================
-   Stock API · Dashboard — Design Tokens + Global Styles
+   Acopio · Dashboard — Design Tokens + Global Styles
    ========================================================= */
 
 /* Mundo visual: mostrador de taller. Papel cálido, grafito, naranja de seguridad como único acento.
@@ -175,16 +175,14 @@ kbd {
 .sidebar-head { display: flex; align-items: center; justify-content: space-between; padding: 0 4px; }
 .sidebar .sidebar-close { display: none; }
 .brand { display: flex; align-items: center; gap: 10px; }
-.brand-mark {
-  width: 30px; height: 30px; border-radius: 7px;
-  background: var(--accent); color: var(--accent-text);
-  display: grid; place-items: center; flex-shrink: 0;
-}
 .brand-text { line-height: 1.15; }
 .brand-name { font-weight: 600; font-size: 15px; letter-spacing: -0.01em; color: #fff; }
 .brand-sub  { font-size: 11px; color: var(--side-muted); margin-top: 2px; }
 .brand-inline { display: flex; align-items: center; gap: 8px; font-weight: 600; }
-.brand-inline .brand-mark { width: 26px; height: 26px; }
+.brand-iso { display: block; flex-shrink: 0; }
+.login-brand img { display: block; height: 48px; width: auto; }
+:root[data-theme="dark"] .login-brand .logo-light,
+:root:not([data-theme="dark"]) .login-brand .logo-dark { display: none; }
 
 .btn.btn-sale { justify-content: center; height: 38px; background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
 .btn.btn-sale:hover:not(:disabled) { background: var(--accent-2); border-color: var(--accent-2); }

@@ -323,7 +323,7 @@ export default function Reportes() {
       </div>
 
       <footer className="page-foot">
-        <span>Stock API · Reportes</span>
+        <span>Acopio · Reportes</span>
         <span>Los datos se actualizan cada 30 s</span>
       </footer>
     </main>
