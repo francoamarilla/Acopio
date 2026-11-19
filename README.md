@@ -1,4 +1,8 @@
-# Stock API — Sistema de control de inventario
+<p align="center"><img src="branding/logo-claro.png" alt="Acopio — gestión de inventario" width="320"></p>
+
+# Acopio — Sistema de control de inventario
+
+> Antes se llamaba **StockAPI Manager**.
 
 Sistema fullstack para gestión de stock en un taller mecánico. Permite administrar productos, registrar ventas y movimientos, y visualizar el estado del negocio desde un dashboard en tiempo real.
 

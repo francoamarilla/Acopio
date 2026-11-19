@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
     info = @Info(
-        title = "Stock API",
+        title = "Acopio API",
         version = "1.0",
-        description = "API de control de stock de repuestos y lubricantes para taller mecánico"
+        description = "API REST de gestión de inventario"
     )
 )
 @SecurityScheme(
