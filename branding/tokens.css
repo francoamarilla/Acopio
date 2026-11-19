@@ -30,6 +30,12 @@
     --acopio-surface:        #252B21;
     --acopio-border:         #3B4434;
     --acopio-text-secondary: #A6AD9F;
+    --acopio-success:        #6FCF8E;
+    --acopio-success-bg:     rgba(31, 107, 58, 0.22);
+    --acopio-warning:        #E8B65A;
+    --acopio-warning-bg:     rgba(138, 90, 10, 0.24);
+    --acopio-error:          #F08A7E;
+    --acopio-error-bg:       rgba(161, 38, 27, 0.24);
   }
 }
 
@@ -42,4 +48,10 @@
   --acopio-surface:        #252B21;
   --acopio-border:         #3B4434;
   --acopio-text-secondary: #A6AD9F;
+  --acopio-success:        #6FCF8E;
+  --acopio-success-bg:     rgba(31, 107, 58, 0.22);
+  --acopio-warning:        #E8B65A;
+  --acopio-warning-bg:     rgba(138, 90, 10, 0.24);
+  --acopio-error:          #F08A7E;
+  --acopio-error-bg:       rgba(161, 38, 27, 0.24);
 }

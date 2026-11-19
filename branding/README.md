@@ -33,11 +33,11 @@ El texto de los logos SVG está convertido a trazados (Inter 600 / 400), así qu
 
 ### Estados
 
-| Estado | Texto | Fondo |
-|---|---|---|
-| Éxito | `#1F6B3A` | `#E7F4EA` |
-| Atención | `#8A5A0A` | `#FCF3DF` |
-| Error | `#A1261B` | `#FCEBE9` |
+| Estado | Variables | Claro (texto / fondo) | Oscuro (texto / fondo) |
+|---|---|---|---|
+| Éxito | `--acopio-success(-bg)` | `#1F6B3A` / `#E7F4EA` | `#6FCF8E` / `rgba(31,107,58,.22)` |
+| Atención | `--acopio-warning(-bg)` | `#8A5A0A` / `#FCF3DF` | `#E8B65A` / `rgba(138,90,10,.24)` |
+| Error | `--acopio-error(-bg)` | `#A1261B` / `#FCEBE9` | `#F08A7E` / `rgba(161,38,27,.24)` |
 
 ## Reglas de uso
 
