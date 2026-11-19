@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Package } from 'lucide-react';
 import axios from 'axios';
 import { api } from '../lib/api';
 import type { LoginResponse } from '../types/api';
@@ -37,10 +36,8 @@ export default function Login({ onLogin }: LoginProps) {
       <div className="login-card">
         <div className="login-head">
           <div className="login-brand">
-            <div className="brand-mark" aria-hidden="true">
-              <Package size={18} strokeWidth={1.6} />
-            </div>
-            <div className="brand-name" style={{ fontSize: 16 }}>Stock</div>
+            <img className="logo-light" src="/logo-claro.svg" alt="Acopio — gestión de inventario" height={48} />
+            <img className="logo-dark" src="/logo-oscuro.svg" alt="Acopio — gestión de inventario" height={48} />
           </div>
           <h1 className="login-title">Iniciá sesión</h1>
           <p className="login-sub">Taller · Av. Mitre 2340</p>

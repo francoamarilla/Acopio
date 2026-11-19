@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Package, ArrowLeftRight, Receipt, Wallet, Users, Truck, BarChart3, ShieldCheck,
-  Search, Plus, Sun, Moon, LogOut, Menu, X, Wrench,
+  Search, Plus, Sun, Moon, LogOut, Menu, X,
 } from 'lucide-react';
 import { useApp } from '../lib/app-context';
 import { initials } from '../lib/format';
@@ -61,8 +61,8 @@ export default function Layout({ theme, onThemeToggle, onLogout, children }: Lay
           <Menu size={18} strokeWidth={1.8} />
         </button>
         <div className="brand-inline">
-          <span className="brand-mark" aria-hidden="true"><Wrench size={15} strokeWidth={2} /></span>
-          Stock
+          <img className="brand-iso" src="/isotipo-oscuro.svg" alt="" width={24} height={24} />
+          Acopio
         </div>
         <button className="icon-btn" onClick={openPalette} aria-label="Buscar">
           <Search size={17} strokeWidth={1.8} />
@@ -74,9 +74,9 @@ export default function Layout({ theme, onThemeToggle, onLogout, children }: Lay
       <aside className={`sidebar${navOpen ? ' is-open' : ''}`} aria-label="Navegación principal">
         <div className="sidebar-head">
           <div className="brand">
-            <span className="brand-mark" aria-hidden="true"><Wrench size={16} strokeWidth={2} /></span>
+            <img className="brand-iso" src="/isotipo-oscuro.svg" alt="" width={28} height={28} />
             <div className="brand-text">
-              <div className="brand-name">Stock</div>
+              <div className="brand-name">Acopio</div>
               <div className="brand-sub">Taller · Av. Mitre 2340</div>
             </div>
           </div>

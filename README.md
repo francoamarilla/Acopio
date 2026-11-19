@@ -1,196 +1,72 @@
-# Stock API — Sistema de control de inventario
+<p align="center"><img src="branding/logo-claro.png" alt="Acopio — gestión de inventario" width="320"></p>
 
-Sistema fullstack para gestión de stock en un taller mecánico. Permite administrar productos, registrar ventas y movimientos, y visualizar el estado del negocio desde un dashboard en tiempo real.
+# Acopio
+
+Gestión de inventario para talleres mecánicos: stock de repuestos y lubricantes, ventas, compras a proveedores, clientes con sus vehículos y cierre de caja.
+
+> Antes se llamaba **StockAPI Manager**.
+
+## Funcionalidades
+
+- **Productos y stock:** alertas de stock mínimo, historial de movimientos y baja lógica.
+- **Ventas:** mano de obra, medio de pago, cliente y vehículo. Descuentan stock al crearse y lo devuelven si se anulan.
+- **Compras:** a proveedores, con sugerencias de reposición. Suman stock al recibirse.
+- **Caja:** cierres diarios por medio de pago.
+- **Dashboard y reportes:** se actualizan solos cada 30 s.
+- **Roles:** `ADMIN` y `OPERADOR`.
+- **Tema:** claro y oscuro.
 
 ## Stack
 
 | Capa | Tecnología |
 |---|---|
-| Backend | Spring Boot 3.2, Java 21, Spring Data JPA, Spring Security + JWT |
-| Base de datos | PostgreSQL (Supabase) |
-| Frontend | React 18, TypeScript, Vite |
-| Estado cliente | TanStack Query v5 |
-| Estilos | CSS Variables (design tokens light/dark) |
+| Backend | Java 21, Spring Boot 3.2, Spring Security + JWT, JPA, Flyway |
+| Base de datos | PostgreSQL (Supabase o Docker) |
+| Frontend | React 18, TypeScript, Vite, TanStack Query |
 
----
+## Correr en local
 
-## Estructura del proyecto
-
-```
-stock-api/
-├── backend/                  # Spring Boot
-│   ├── pom.xml
-│   └── src/
-│       └── main/
-│           ├── java/com/stockapi/
-│           │   ├── config/       # CORS, Swagger, DataInitializer
-│           │   ├── controller/   # REST controllers
-│           │   ├── dto/          # Request / Response DTOs
-│           │   ├── exception/    # GlobalExceptionHandler
-│           │   ├── model/        # Entidades JPA
-│           │   ├── repository/   # Spring Data repositories
-│           │   ├── security/     # JWT filter, SecurityConfig
-│           │   └── service/      # Lógica de negocio
-│           └── resources/
-│               └── application.properties.example
-├── frontend/                 # React + TypeScript
-│   ├── index.html
-│   ├── package.json
-│   ├── vite.config.ts
-│   └── src/
-│       ├── components/       # UI reutilizable (Drawer, Toast, TipoChip…)
-│       ├── hooks/            # useProductos, useVentas, useMovimientos…
-│       ├── lib/              # api.ts (Axios + JWT), format.ts
-│       ├── pages/            # Dashboard, Productos, Ventas, Movimientos
-│       ├── styles/           # index.css (design tokens + componentes)
-│       └── types/            # api.ts (interfaces TypeScript)
-└── docs/
-    ├── db-setup.sql          # Referencia histórica (el esquema lo maneja Flyway)
-    └── design/
-        ├── handoff/          # Especificaciones de diseño por fase (01–08)
-        └── dashboard/        # Prototipo HTML del dashboard
-```
-
----
-
-## Requisitos previos
-
-- Java 21+
-- Apache Maven 3.8+
-- Node.js 20+ / npm 10+
-- PostgreSQL 15+ (o cuenta en Supabase)
-
----
-
-## Setup
-
-### 1. Base de datos
-
-El esquema lo crea y actualiza **Flyway** al arrancar el backend (migraciones en `backend/src/main/resources/db/migration`). Solo hace falta una base PostgreSQL vacía (o la existente: `baseline-on-migrate` la adopta sin perder datos).
-
-Para cambiar el esquema, agregá un archivo `V<n>__descripcion.sql` nuevo; nunca edites una migración ya aplicada. Hibernate corre en modo `validate`.
-
-### 2. Backend
+Requisitos: Java 21, Maven, Node 20+ y PostgreSQL (o Docker).
 
 ```bash
+# 1. Base de datos (Flyway crea el esquema al arrancar)
+docker run -d --name stockapi-pg -e POSTGRES_PASSWORD=stockapi -p 5434:5432 postgres:16-alpine
+
+# 2. Backend → http://localhost:8080 (Swagger en /swagger-ui.html)
 cd backend
+cp src/main/resources/application-local.properties.example src/main/resources/application-local.properties
+# editar: URL jdbc:postgresql://localhost:5434/postgres, usuario postgres, password y jwt.secret (32+ caracteres)
+mvn spring-boot:run -Dspring-boot.run.profiles=local
 
-# Copiar el archivo de configuración y completarlo con tus valores
-cp src/main/resources/application.properties.example \
-   src/main/resources/application.properties
-
-# Editar application.properties con tu URL, usuario y contraseña de BD,
-# y un JWT secret seguro (mínimo 32 caracteres)
-
-# Levantar el servidor (puerto 8080 por defecto)
-mvn spring-boot:run
+# 3. Frontend → http://localhost:5173 (proxy /api → :8080)
+cd frontend && npm install && npm run dev
 ```
 
-> El servidor levanta en `http://localhost:8080`. La documentación Swagger está en `/swagger-ui.html`.
+En el primer arranque se crea el usuario `admin@stockapi.com` / `Admin123`. Cambiá la contraseña.
 
-### 3. Frontend
+En producción, el backend lee `DATABASE_URL`, `DATABASE_USERNAME`, `DATABASE_PASSWORD` y `JWT_SECRET` desde el entorno. `application-local.properties` está en `.gitignore`: no commitees credenciales.
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-> La app corre en `http://localhost:5173`. El proxy de Vite redirige `/api/*` → `http://localhost:8080`.
-
----
-
-## Endpoints principales
-
-| Método | Ruta | Descripción |
-|---|---|---|
-| `POST` | `/api/auth/login` | Login → devuelve JWT |
-| `GET` | `/api/productos` | Listar productos activos |
-| `POST` | `/api/productos` | Crear producto |
-| `PUT` | `/api/productos/{id}` | Actualizar producto |
-| `DELETE` | `/api/productos/{id}` | Baja lógica (activo = false) |
-| `GET` | `/api/productos/bajo-stock` | Productos bajo stock mínimo |
-| `GET` | `/api/ventas` | Listar ventas |
-| `POST` | `/api/ventas` | Crear venta (descuenta stock inmediatamente) |
-| `PUT` | `/api/ventas/{id}/estado` | Cambiar estado (ANULADA devuelve stock) |
-| `GET` | `/api/movimientos` | Historial de movimientos |
-| `POST` | `/api/movimientos` | Registrar movimiento manual |
-| `GET` | `/api/reportes/stock` | Valor total del inventario |
-| `GET` | `/api/reportes/ventas` | Reporte de ventas por período |
-
-Todos los endpoints (excepto `/api/auth/*`) requieren el header:
-```
-Authorization: Bearer <token>
-```
-
----
-
-## Roles
-
-| Rol | Permisos |
-|---|---|
-| `ADMIN` | Acceso completo: crear, editar, eliminar productos y ventas |
-| `OPERADOR` | Solo lectura y creación de ventas; no puede eliminar ni acceder a Usuarios |
-
----
-
-## Modelo de datos (simplificado)
+## Estructura
 
 ```
-Usuario       (id, nombre, email, password, rol)
-Producto      (id, nombre, codigo, categoria, precioCosto, precioVenta,
-               stockActual, stockMinimo, activo)
-Transaccion   (id, usuario, estado, total, observaciones, fecha)
-  └─ DetalleVenta (productoId, cantidad, precioUnitario)
-Movimiento    (id, producto, usuario, tipo, cantidad,
-               stockAnterior, stockPosterior, nota, fecha)
+backend/    Spring Boot (controller, service, repository, model, security)
+            └─ src/main/resources/db/migration/   migraciones Flyway
+frontend/   React + TS (pages, components, hooks, styles/tokens.css)
+branding/   logo, isotipo, favicon y paleta de Acopio
+docs/       diseño y scripts SQL de referencia
 ```
 
-**Enums:**
-- `Categoria`: `REPUESTO` | `LUBRICANTE`
-- `TipoMovimiento`: `ENTRADA` | `SALIDA` | `AJUSTE`
-- `EstadoVenta`: `PENDIENTE` | `COMPLETADA` | `ANULADA`
-- `Rol`: `ADMIN` | `OPERADOR`
+## API
 
----
+La documentación completa de los endpoints está en Swagger: `http://localhost:8080/swagger-ui.html`. Salvo `/api/auth/login`, todos los endpoints requieren `Authorization: Bearer <token>`.
 
 ## Reglas de negocio
 
-- Las ventas se crean directamente como `COMPLETADA` y descuentan el stock en el mismo acto.
-- Anular una venta (`ANULADA`) restaura el stock y registra movimientos `ENTRADA` automáticos.
-- Los movimientos `AJUSTE` usan delta firmado: valor positivo suma, negativo resta.
-- La baja de productos es **lógica** (`activo = false`); se pueden reactivar.
+- El stock solo cambia con ventas, compras recibidas o movimientos manuales, y cada cambio queda registrado como movimiento.
+- Anular una venta devuelve el stock.
+- Los ajustes usan un delta con signo: positivo suma, negativo resta.
+- `OPERADOR` puede operar el día a día. No puede borrar productos, administrar usuarios o proveedores, ni anular compras.
 
----
+## Para cambiar el esquema
 
-## Variables de entorno del backend
-
-Ver `backend/src/main/resources/application.properties.example` para la lista completa.
-
-Las variables críticas son:
-
-```properties
-spring.datasource.url=jdbc:postgresql://<HOST>:<PORT>/postgres?sslmode=require
-spring.datasource.username=<DB_USER>
-spring.datasource.password=<DB_PASSWORD>
-jwt.secret=<JWT_SECRET_MIN_32_CHARS>
-```
-
-> **Nunca commitear** `application.properties` con credenciales reales. El archivo está en `.gitignore`.
-
----
-
-## Scripts útiles
-
-```bash
-# Backend
-mvn spring-boot:run          # desarrollo
-mvn clean package            # compilar JAR
-mvn test                     # tests
-
-# Frontend
-npm run dev                  # desarrollo (HMR)
-npm run build                # build de producción
-npm run preview              # preview del build
-npx tsc --noEmit             # verificar tipos sin compilar
-```
+Agregá una migración `V<n>__descripcion.sql` nueva y nunca edites una ya aplicada. Hibernate corre en modo `validate`.
