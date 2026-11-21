@@ -1,72 +1,88 @@
 <p align="center"><img src="branding/logo-claro.png" alt="Acopio — gestión de inventario" width="320"></p>
 
-# Acopio
+# Acopio — Sistema de gestión de stock y ventas
 
-Gestión de inventario para talleres mecánicos: stock de repuestos y lubricantes, ventas, compras a proveedores, clientes con sus vehículos y cierre de caja.
+Plataforma de gestión comercial que centraliza el inventario, las ventas, las compras a proveedores y los cierres de caja.
 
-> Antes se llamaba **StockAPI Manager**.
+El sistema incorpora reglas de negocio orientadas a la consistencia del inventario, la trazabilidad de movimientos y el control de acceso basado en roles. Su caso de uso principal son los talleres mecánicos, con gestión de repuestos, lubricantes, clientes y vehículos.
+
+[English version](README.en.md)
 
 ## Funcionalidades
 
 - **Productos y stock:** alertas de stock mínimo, historial de movimientos y baja lógica.
-- **Ventas:** mano de obra, medio de pago, cliente y vehículo. Descuentan stock al crearse y lo devuelven si se anulan.
-- **Compras:** a proveedores, con sugerencias de reposición. Suman stock al recibirse.
+- **Ventas:** mano de obra, medio de pago, cliente y vehículo; descuentan existencias al registrarse y las restituyen al anularse.
+- **Compras:** gestión de proveedores y sugerencias de reposición; incrementan el stock al recibirse.
 - **Caja:** cierres diarios por medio de pago.
-- **Dashboard y reportes:** se actualizan solos cada 30 s.
-- **Roles:** `ADMIN` y `OPERADOR`.
-- **Tema:** claro y oscuro.
+- **Dashboard y reportes:** actualización cada 30 segundos.
+- **Seguridad:** autenticación JWT y roles `ADMIN` y `OPERADOR`.
+- **Interfaz:** temas claro y oscuro.
 
-## Stack
+## Arquitectura
 
-| Capa | Tecnología |
-|---|---|
-| Backend | Java 21, Spring Boot 3.2, Spring Security + JWT, JPA, Flyway |
-| Base de datos | PostgreSQL (Supabase o Docker) |
-| Frontend | React 18, TypeScript, Vite, TanStack Query |
-
-## Correr en local
-
-Requisitos: Java 21, Maven, Node 20+ y PostgreSQL (o Docker).
-
-```bash
-# 1. Base de datos (Flyway crea el esquema al arrancar)
-docker run -d --name stockapi-pg -e POSTGRES_PASSWORD=stockapi -p 5434:5432 postgres:16-alpine
-
-# 2. Backend → http://localhost:8080 (Swagger en /swagger-ui.html)
-cd backend
-cp src/main/resources/application-local.properties.example src/main/resources/application-local.properties
-# editar: URL jdbc:postgresql://localhost:5434/postgres, usuario postgres, password y jwt.secret (32+ caracteres)
-mvn spring-boot:run -Dspring-boot.run.profiles=local
-
-# 3. Frontend → http://localhost:5173 (proxy /api → :8080)
-cd frontend && npm install && npm run dev
+```mermaid
+flowchart TD
+    F[React + TypeScript] -->|API REST / JWT| C[Controllers]
+    S[Spring Security] -.-> C
+    C --> B[Services / reglas de negocio]
+    B --> R[Repositories / Spring Data JPA]
+    R --> D[(PostgreSQL)]
+    M[Flyway] --> D
 ```
 
-En el primer arranque se crea el usuario `admin@stockapi.com` / `Admin123`. Cambiá la contraseña.
+Arquitectura por capas basada en la estructura documentada del proyecto. El frontend consume la API REST y el backend concentra las reglas de negocio y el acceso a datos.
 
-En producción, el backend lee `DATABASE_URL`, `DATABASE_USERNAME`, `DATABASE_PASSWORD` y `JWT_SECRET` desde el entorno. `application-local.properties` está en `.gitignore`: no commitees credenciales.
-
-## Estructura
-
-```
-backend/    Spring Boot (controller, service, repository, model, security)
-            └─ src/main/resources/db/migration/   migraciones Flyway
-frontend/   React + TS (pages, components, hooks, styles/tokens.css)
-branding/   logo, isotipo, favicon y paleta de Acopio
-docs/       diseño y scripts SQL de referencia
-```
-
-## API
-
-La documentación completa de los endpoints está en Swagger: `http://localhost:8080/swagger-ui.html`. Salvo `/api/auth/login`, todos los endpoints requieren `Authorization: Bearer <token>`.
+[Documentación de arquitectura](docs/architecture.md)
 
 ## Reglas de negocio
 
-- El stock solo cambia con ventas, compras recibidas o movimientos manuales, y cada cambio queda registrado como movimiento.
-- Anular una venta devuelve el stock.
-- Los ajustes usan un delta con signo: positivo suma, negativo resta.
-- `OPERADOR` puede operar el día a día. No puede borrar productos, administrar usuarios o proveedores, ni anular compras.
+| Operación | Efecto |
+|---|---|
+| Registrar venta | Descuenta stock. |
+| Anular venta | Restituye stock. |
+| Recibir compra | Incrementa stock. |
+| Ajustar inventario | Aplica un delta positivo o negativo. |
+| Modificar existencias | Registra el movimiento. |
+| Dar de baja un producto | Baja lógica. |
 
-## Para cambiar el esquema
+El rol `OPERADOR` puede realizar operaciones cotidianas, pero no puede dar de baja productos, administrar usuarios o proveedores, ni anular compras.
 
-Agregá una migración `V<n>__descripcion.sql` nueva y nunca edites una ya aplicada. Hibernate corre en modo `validate`.
+[Reglas de negocio y permisos](docs/business-rules.md)
+
+## Stack tecnológico
+
+| Capa | Tecnología |
+|---|---|
+| Backend | Java 21, Spring Boot 3.2, Spring Security, JWT, Spring Data JPA |
+| Frontend | React 18, TypeScript, Vite, TanStack Query, Axios |
+| Base de datos | PostgreSQL, Flyway |
+| Documentación de API | Swagger/OpenAPI |
+
+## Ejecución local
+
+Requisitos: Java 21, Maven, Node.js 20+ y PostgreSQL o Docker.
+
+1. Iniciar PostgreSQL y configurar el perfil local del backend.
+2. Ejecutar el backend con Maven.
+3. Instalar las dependencias del frontend y ejecutar `npm run dev`.
+
+- Frontend: http://localhost:5173
+- API: http://localhost:8080
+- Swagger: http://localhost:8080/swagger-ui.html
+
+[Guía completa de instalación, configuración y primer acceso](docs/setup.md)
+
+## Estructura del repositorio
+
+- `backend/`: controllers, services, repositories, model, security y migraciones Flyway.
+- `frontend/`: aplicación React, páginas, componentes, hooks y estilos.
+- `branding/`: identidad visual de Acopio.
+- `docs/`: documentación técnica y scripts SQL de referencia.
+
+## Documentación
+
+- [Arquitectura](docs/architecture.md)
+- [Reglas de negocio](docs/business-rules.md)
+- [Instalación y configuración](docs/setup.md)
+
+[Portfolio](https://francoamarilla.github.io/portfolio/) · [LinkedIn](https://www.linkedin.com/in/franco-maximiliano-amarilla/)
