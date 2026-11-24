@@ -1,6 +1,6 @@
 # Arquitectura
 
-[English version](en/architecture.md) · [README](../README.md)
+[English version](en/architecture.md) · [README](../README.es.md)
 
 Acopio utiliza una arquitectura cliente-servidor con una aplicación web React y una API REST Spring Boot.
 

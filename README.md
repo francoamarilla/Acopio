@@ -1,88 +1,88 @@
-<p align="center"><img src="branding/logo-claro.png" alt="Acopio — gestión de inventario" width="320"></p>
+<p align="center"><img src="branding/logo-claro.png" alt="Acopio — inventory management" width="320"></p>
 
-# Acopio — Sistema de gestión de stock y ventas
+# Acopio — Inventory and Sales Management
 
-Plataforma de gestión comercial que centraliza el inventario, las ventas, las compras a proveedores y los cierres de caja.
+Commercial management platform that centralizes inventory, sales, supplier purchases and daily cash closing.
 
-El sistema incorpora reglas de negocio orientadas a la consistencia del inventario, la trazabilidad de movimientos y el control de acceso basado en roles. Su caso de uso principal son los talleres mecánicos, con gestión de repuestos, lubricantes, clientes y vehículos.
+The system incorporates business rules focused on inventory consistency, movement traceability and role-based access control. Its primary use case is automotive repair shops, with management of spare parts, lubricants, customers and vehicles.
 
-[English version](README.en.md)
+[Versión en español](README.es.md)
 
-## Funcionalidades
+## Features
 
-- **Productos y stock:** alertas de stock mínimo, historial de movimientos y baja lógica.
-- **Ventas:** mano de obra, medio de pago, cliente y vehículo; descuentan existencias al registrarse y las restituyen al anularse.
-- **Compras:** gestión de proveedores y sugerencias de reposición; incrementan el stock al recibirse.
-- **Caja:** cierres diarios por medio de pago.
-- **Dashboard y reportes:** actualización cada 30 segundos.
-- **Seguridad:** autenticación JWT y roles `ADMIN` y `OPERADOR`.
-- **Interfaz:** temas claro y oscuro.
+- **Products and inventory:** low-stock alerts, movement history and soft deletion.
+- **Sales:** labor, payment method, customer and vehicle; deducts stock when recorded and restores it when cancelled.
+- **Purchases:** supplier management and replenishment suggestions; increases stock upon receipt.
+- **Cash management:** daily closing by payment method.
+- **Dashboard and reports:** refresh every 30 seconds.
+- **Security:** JWT authentication and `ADMIN` and `OPERADOR` roles.
+- **Interface:** light and dark themes.
 
-## Arquitectura
+## Architecture
 
 ```mermaid
 flowchart TD
-    F[React + TypeScript] -->|API REST / JWT| C[Controllers]
+    F[React + TypeScript] -->|REST API / JWT| C[Controllers]
     S[Spring Security] -.-> C
-    C --> B[Services / reglas de negocio]
+    C --> B[Services / business logic]
     B --> R[Repositories / Spring Data JPA]
     R --> D[(PostgreSQL)]
     M[Flyway] --> D
 ```
 
-Arquitectura por capas basada en la estructura documentada del proyecto. El frontend consume la API REST y el backend concentra las reglas de negocio y el acceso a datos.
+Layered architecture based on the documented repository structure. The frontend consumes the REST API, while the backend handles business rules and data access.
 
-[Documentación de arquitectura](docs/architecture.md)
+[Architecture documentation](docs/en/architecture.md)
 
-## Reglas de negocio
+## Business rules
 
-| Operación | Efecto |
+| Operation | Effect |
 |---|---|
-| Registrar venta | Descuenta stock. |
-| Anular venta | Restituye stock. |
-| Recibir compra | Incrementa stock. |
-| Ajustar inventario | Aplica un delta positivo o negativo. |
-| Modificar existencias | Registra el movimiento. |
-| Dar de baja un producto | Baja lógica. |
+| Record a sale | Deducts stock. |
+| Cancel a sale | Restores stock. |
+| Receive a purchase | Increases stock. |
+| Adjust inventory | Applies a positive or negative delta. |
+| Change stock | Records the movement. |
+| Deactivate a product | Uses soft deletion. |
 
-El rol `OPERADOR` puede realizar operaciones cotidianas, pero no puede dar de baja productos, administrar usuarios o proveedores, ni anular compras.
+The `OPERADOR` role can perform routine operations but cannot deactivate products, manage users or suppliers, or cancel purchases.
 
-[Reglas de negocio y permisos](docs/business-rules.md)
+[Business rules and permissions](docs/en/business-rules.md)
 
-## Stack tecnológico
+## Tech stack
 
-| Capa | Tecnología |
+| Layer | Technology |
 |---|---|
 | Backend | Java 21, Spring Boot 3.2, Spring Security, JWT, Spring Data JPA |
 | Frontend | React 18, TypeScript, Vite, TanStack Query, Axios |
-| Base de datos | PostgreSQL, Flyway |
-| Documentación de API | Swagger/OpenAPI |
+| Database | PostgreSQL, Flyway |
+| API documentation | Swagger/OpenAPI |
 
-## Ejecución local
+## Local setup
 
-Requisitos: Java 21, Maven, Node.js 20+ y PostgreSQL o Docker.
+Requirements: Java 21, Maven, Node.js 20+ and PostgreSQL or Docker.
 
-1. Iniciar PostgreSQL y configurar el perfil local del backend.
-2. Ejecutar el backend con Maven.
-3. Instalar las dependencias del frontend y ejecutar `npm run dev`.
+1. Start PostgreSQL and configure the backend local profile.
+2. Run the backend with Maven.
+3. Install frontend dependencies and run `npm run dev`.
 
 - Frontend: http://localhost:5173
 - API: http://localhost:8080
 - Swagger: http://localhost:8080/swagger-ui.html
 
-[Guía completa de instalación, configuración y primer acceso](docs/setup.md)
+[Complete setup, configuration and initial login guide](docs/en/setup.md)
 
-## Estructura del repositorio
+## Repository structure
 
-- `backend/`: controllers, services, repositories, model, security y migraciones Flyway.
-- `frontend/`: aplicación React, páginas, componentes, hooks y estilos.
-- `branding/`: identidad visual de Acopio.
-- `docs/`: documentación técnica y scripts SQL de referencia.
+- `backend/`: controllers, services, repositories, model, security and Flyway migrations.
+- `frontend/`: React application, pages, components, hooks and styles.
+- `branding/`: Acopio visual identity.
+- `docs/`: technical documentation and reference SQL scripts.
 
-## Documentación
+## Documentation
 
-- [Arquitectura](docs/architecture.md)
-- [Reglas de negocio](docs/business-rules.md)
-- [Instalación y configuración](docs/setup.md)
+- [Architecture](docs/en/architecture.md)
+- [Business rules](docs/en/business-rules.md)
+- [Setup and configuration](docs/en/setup.md)
 
 [Portfolio](https://francoamarilla.github.io/portfolio/) · [LinkedIn](https://www.linkedin.com/in/franco-maximiliano-amarilla/)

@@ -1,6 +1,6 @@
 # Architecture
 
-[Versión en español](../architecture.md) · [README](../../README.en.md)
+[Versión en español](../architecture.md) · [README](../../README.md)
 
 Acopio uses a client-server architecture with a React web application and a Spring Boot REST API.
 
